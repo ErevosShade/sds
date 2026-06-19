@@ -1,529 +1,332 @@
-import { useEffect, useRef, useMemo } from "react";
-import { motion, useAnimationControls } from "framer-motion";
-import { ArrowRight, ChevronDown } from "lucide-react";
+import { useMemo, useEffect, useRef } from "react";
+import { motion } from "framer-motion";
+import { ArrowRight } from "lucide-react";
 import sdsLogo from "../../assets/sds-logo.jpg";
 
-// ─── Particle config ─────────────────────────────────────────────────────────
-const PARTICLE_COUNT = 56;
-
-function generateParticles() {
-  return Array.from({ length: PARTICLE_COUNT }, (_, i) => ({
-    id: i,
-    x: Math.random() * 100,           // vw %
-    y: Math.random() * 100,           // vh %
-    size: Math.random() * 2.5 + 0.8,  // px
-    duration: Math.random() * 6 + 5,  // float cycle seconds
-    delay: Math.random() * 4,         // stagger
-    opacity: Math.random() * 0.45 + 0.08,
-    // Roughly 60% blue-toned, 40% orange-toned
-    color: Math.random() > 0.4 ? "#1A6FE8" : "#F5A623",
-    driftX: (Math.random() - 0.5) * 30,  // horizontal float range px
-    driftY: (Math.random() - 0.5) * 20,
-  }));
-}
-
-// ─── Framer Motion variants ───────────────────────────────────────────────────
-const containerVariants = {
-  hidden: {},
-  visible: {
-    transition: {
-      staggerChildren: 0.12,
-      delayChildren: 0.25,
-    },
-  },
-};
-
-const fadeUpVariants = {
-  hidden: { opacity: 0, y: 32, filter: "blur(4px)" },
-  visible: {
-    opacity: 1,
-    y: 0,
-    filter: "blur(0px)",
-    transition: { duration: 0.75, ease: [0.22, 1, 0.36, 1] },
-  },
-};
-
-const fadeInVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { duration: 0.6, ease: "easeOut" },
-  },
-};
-
-const buttonVariants = {
-  hidden: { opacity: 0, y: 20, scale: 0.96 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    scale: 1,
-    transition: { duration: 0.55, ease: [0.34, 1.56, 0.64, 1] },
-  },
-};
-
-// ─── Gradient orb data ───────────────────────────────────────────────────────
-const ORBS = [
-  {
-    id: "orb-blue-1",
-    style: {
-      width: "65vw", height: "65vw",
-      top: "-18%", left: "-12%",
-      background: "radial-gradient(circle, #1A6FE822 0%, #1A6FE808 45%, transparent 70%)",
-      animationDuration: "18s",
-      animationDelay: "0s",
-    },
-  },
-  {
-    id: "orb-orange-1",
-    style: {
-      width: "50vw", height: "50vw",
-      bottom: "-10%", right: "-8%",
-      background: "radial-gradient(circle, #F5A62318 0%, #F5A62306 45%, transparent 70%)",
-      animationDuration: "22s",
-      animationDelay: "-6s",
-    },
-  },
-  {
-    id: "orb-blue-2",
-    style: {
-      width: "35vw", height: "35vw",
-      top: "30%", right: "15%",
-      background: "radial-gradient(circle, #1A6FE814 0%, transparent 65%)",
-      animationDuration: "28s",
-      animationDelay: "-12s",
-    },
-  },
-  {
-    id: "orb-orange-2",
-    style: {
-      width: "28vw", height: "28vw",
-      top: "10%", right: "35%",
-      background: "radial-gradient(circle, #F5A62310 0%, transparent 65%)",
-      animationDuration: "15s",
-      animationDelay: "-4s",
-    },
-  },
+// ─── Animated neural network SVG ─────────────────────────────────────────────
+const NODES = [
+  // Input layer
+  { id: "i1", x: 80,  y: 80,  layer: 0 },
+  { id: "i2", x: 80,  y: 180, layer: 0 },
+  { id: "i3", x: 80,  y: 280, layer: 0 },
+  { id: "i4", x: 80,  y: 380, layer: 0 },
+  // Hidden layer 1
+  { id: "h1", x: 230, y: 110, layer: 1 },
+  { id: "h2", x: 230, y: 210, layer: 1 },
+  { id: "h3", x: 230, y: 310, layer: 1 },
+  // Hidden layer 2
+  { id: "h4", x: 380, y: 140, layer: 2 },
+  { id: "h5", x: 380, y: 240, layer: 2 },
+  { id: "h6", x: 380, y: 340, layer: 2 },
+  // Output
+  { id: "o1", x: 520, y: 180, layer: 3 },
+  { id: "o2", x: 520, y: 290, layer: 3 },
 ];
 
-// ─── Component ────────────────────────────────────────────────────────────────
-export default function Hero() {
-  const particles = useMemo(() => generateParticles(), []);
-  const scrollRef = useRef(null);
+const EDGES = [
+  // i → h1
+  ["i1","h1"],["i1","h2"],["i1","h3"],
+  ["i2","h1"],["i2","h2"],["i2","h3"],
+  ["i3","h1"],["i3","h2"],["i3","h3"],
+  ["i4","h2"],["i4","h3"],
+  // h1 → h2
+  ["h1","h4"],["h1","h5"],
+  ["h2","h4"],["h2","h5"],["h2","h6"],
+  ["h3","h5"],["h3","h6"],
+  // h2 → o
+  ["h4","o1"],["h4","o2"],
+  ["h5","o1"],["h5","o2"],
+  ["h6","o2"],
+];
 
-  const handleScrollDown = () => {
-    const next = document.getElementById("about");
-    if (next) next.scrollIntoView({ behavior: "smooth" });
-  };
+function NeuralNet() {
+  const nodeMap = Object.fromEntries(NODES.map(n => [n.id, n]));
+  const layerColors = ["#F5A623", "#1A6FE8", "#4D91F0", "#F5A623"];
 
   return (
-    <section
-      className="relative flex flex-col min-h-screen overflow-hidden"
-      style={{ background: "#050510" }}
+    <svg
+      viewBox="0 0 600 460"
+      className="w-full h-full"
+      style={{ opacity: 0.9 }}
     >
-      {/* ── Gradient orbs ───────────────────────────────────────────────── */}
-      <div aria-hidden="true" className="absolute inset-0 pointer-events-none">
-        {ORBS.map((orb) => (
-          <div
-            key={orb.id}
-            className="absolute rounded-full"
-            style={{
-              ...orb.style,
-              animation: `orbDrift ${orb.style.animationDuration} ease-in-out infinite alternate`,
-              animationDelay: orb.style.animationDelay,
-              willChange: "transform",
-              filter: "blur(1px)",
-            }}
-          />
+      <defs>
+        {/* Pulse gradient for edges */}
+        {EDGES.map(([a, b], i) => (
+          <linearGradient key={i} id={`eg${i}`} x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="#1A6FE8" stopOpacity="0.15" />
+            <stop offset="50%" stopColor="#4D91F0" stopOpacity="0.5" />
+            <stop offset="100%" stopColor="#1A6FE8" stopOpacity="0.15" />
+          </linearGradient>
         ))}
-      </div>
+        <radialGradient id="nodeGlow" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stopColor="#ffffff" stopOpacity="0.9" />
+          <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
+        </radialGradient>
+      </defs>
 
-      {/* ── Noise grain overlay ─────────────────────────────────────────── */}
-      <div
-        aria-hidden="true"
-        className="absolute inset-0 pointer-events-none opacity-[0.025]"
-        style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
-          backgroundSize: "180px 180px",
-        }}
-      />
+      {/* Edges */}
+      {EDGES.map(([a, b], i) => {
+        const A = nodeMap[a], B = nodeMap[b];
+        const delay = (i * 0.18) % 3.5;
+        return (
+          <motion.line
+            key={i}
+            x1={A.x} y1={A.y} x2={B.x} y2={B.y}
+            stroke={`url(#eg${i})`}
+            strokeWidth={1}
+            initial={{ pathLength: 0, opacity: 0 }}
+            animate={{ pathLength: 1, opacity: [0.1, 0.45, 0.1] }}
+            transition={{ duration: 3, delay, repeat: Infinity, ease: "easeInOut" }}
+          />
+        );
+      })}
 
-      {/* ── Grid lines ──────────────────────────────────────────────────── */}
-      <div
-        aria-hidden="true"
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          backgroundImage: `
-            linear-gradient(rgba(26,111,232,0.04) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(26,111,232,0.04) 1px, transparent 1px)
-          `,
-          backgroundSize: "72px 72px",
-          maskImage: "radial-gradient(ellipse 80% 60% at 50% 40%, black 30%, transparent 100%)",
-        }}
-      />
-
-      {/* ── Floating particles ──────────────────────────────────────────── */}
-      <div aria-hidden="true" className="absolute inset-0 pointer-events-none overflow-hidden">
-        {particles.map((p) => (
-          <motion.span
-            key={p.id}
-            className="absolute rounded-full"
-            style={{
-              left: `${p.x}%`,
-              top: `${p.y}%`,
-              width: p.size,
-              height: p.size,
-              background: p.color,
-              opacity: p.opacity,
-              boxShadow: `0 0 ${p.size * 3}px ${p.color}80`,
-            }}
+      {/* Pulse dots travelling along edges */}
+      {EDGES.filter((_, i) => i % 3 === 0).map(([a, b], i) => {
+        const A = nodeMap[a], B = nodeMap[b];
+        return (
+          <motion.circle
+            key={`pulse-${i}`}
+            r={2.5}
+            fill="#4D91F0"
+            style={{ filter: "drop-shadow(0 0 4px #1A6FE8)" }}
+            initial={{ cx: A.x, cy: A.y, opacity: 0 }}
             animate={{
-              x: [0, p.driftX, 0],
-              y: [0, p.driftY, 0],
-              opacity: [p.opacity, p.opacity * 0.4, p.opacity],
-              scale: [1, 1.4, 1],
+              cx: [A.x, B.x],
+              cy: [A.y, B.y],
+              opacity: [0, 1, 0],
             }}
             transition={{
-              duration: p.duration,
-              delay: p.delay,
+              duration: 1.2,
+              delay: i * 0.55,
               repeat: Infinity,
               ease: "easeInOut",
+              repeatDelay: 1.8,
             }}
           />
-        ))}
-      </div>
+        );
+      })}
 
-      {/* ── Horizontal scan line ────────────────────────────────────────── */}
-      <motion.div
-        aria-hidden="true"
-        className="absolute left-0 right-0 h-px pointer-events-none"
+      {/* Nodes */}
+      {NODES.map((node, i) => {
+        const color = layerColors[node.layer];
+        return (
+          <g key={node.id}>
+            {/* Glow ring */}
+            <motion.circle
+              cx={node.x} cy={node.y} r={14}
+              fill="none"
+              stroke={color}
+              strokeWidth={1}
+              initial={{ opacity: 0.1, scale: 0.8 }}
+              animate={{ opacity: [0.1, 0.4, 0.1], scale: [0.8, 1.15, 0.8] }}
+              transition={{ duration: 2.5, delay: i * 0.15, repeat: Infinity, ease: "easeInOut" }}
+              style={{ transformOrigin: `${node.x}px ${node.y}px` }}
+            />
+            {/* Core */}
+            <motion.circle
+              cx={node.x} cy={node.y} r={7}
+              fill={color}
+              fillOpacity={0.85}
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ delay: 0.3 + i * 0.06, type: "spring", stiffness: 300 }}
+              style={{ transformOrigin: `${node.x}px ${node.y}px`, filter: `drop-shadow(0 0 6px ${color})` }}
+            />
+          </g>
+        );
+      })}
+
+      {/* Layer labels */}
+      {[["Input", 80], ["Hidden", 230], ["Hidden", 380], ["Output", 520]].map(([label, x], i) => (
+        <motion.text
+          key={i} x={x} y={440}
+          textAnchor="middle"
+          fill="rgba(160,160,184,0.5)"
+          fontSize={11}
+          fontFamily="'DM Sans', sans-serif"
+          letterSpacing={1}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1 + i * 0.1 }}
+        >
+          {label}
+        </motion.text>
+      ))}
+    </svg>
+  );
+}
+
+// ─── Floating data chips ──────────────────────────────────────────────────────
+const CHIPS = [
+  { label: "accuracy: 97.4%",  color: "#22C55E", delay: 0.6,  x: "5%",  y: "12%" },
+  { label: "loss: 0.032",      color: "#1A6FE8", delay: 1.1,  x: "55%", y: "4%"  },
+  { label: "epoch 48/50",      color: "#F5A623", delay: 1.6,  x: "2%",  y: "80%" },
+  { label: "val_acc: 96.1%",   color: "#4D91F0", delay: 2.0,  x: "50%", y: "88%" },
+];
+
+// ─── Main component ───────────────────────────────────────────────────────────
+const stagger = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.11, delayChildren: 0.15 } },
+};
+const up = {
+  hidden: { opacity: 0, y: 30, filter: "blur(4px)" },
+  visible: { opacity: 1, y: 0, filter: "blur(0px)", transition: { duration: 0.65, ease: [0.22,1,0.36,1] } },
+};
+
+export default function Hero() {
+  return (
+    <section
+      className="relative overflow-hidden"
+      style={{ background: "#050510", minHeight: "100vh", paddingTop: 80 }}
+    >
+      {/* Subtle grid */}
+      <div aria-hidden className="absolute inset-0 pointer-events-none"
         style={{
-          background:
-            "linear-gradient(90deg, transparent, #1A6FE840, #F5A62330, transparent)",
+          backgroundImage: "radial-gradient(rgba(26,111,232,0.12) 1px, transparent 1px)",
+          backgroundSize: "48px 48px",
+          maskImage: "radial-gradient(ellipse 80% 80% at 50% 50%, black, transparent)",
         }}
-        animate={{ top: ["15%", "85%", "15%"] }}
-        transition={{ duration: 14, repeat: Infinity, ease: "easeInOut" }}
       />
 
-      {/* ── Navbar strip ────────────────────────────────────────────────── */}
-      <motion.nav
-        variants={fadeInVariants}
-        initial="hidden"
-        animate="visible"
-        className="relative z-20 flex items-center justify-between px-6 md:px-12 pt-6 pb-4"
-        style={{
-          borderBottom: "1px solid rgba(26,111,232,0.10)",
-        }}
+      {/* Inner container: split layout */}
+      <div
+        className="relative z-10 flex flex-col lg:flex-row items-center"
+        style={{ maxWidth: 1200, margin: "0 auto", padding: "4vh 2rem 6vh", minHeight: "calc(100vh - 80px)", gap: "2rem" }}
       >
-        {/* Logo */}
-        <div className="flex items-center gap-3">
-          <div
-            className="rounded-xl overflow-hidden flex-shrink-0"
-            style={{
-              width: 42,
-              height: 42,
-              background: "#0D0D1A",
-              border: "1px solid rgba(26,111,232,0.25)",
-              padding: "5px",
-            }}
-          >
-            <img
-              src={sdsLogo}
-              alt="SDS logo"
-              className="w-full h-full object-contain"
-            />
-          </div>
-          <div className="flex flex-col leading-tight">
-            <span
-              className="font-bold tracking-wide text-sm"
-              style={{ fontFamily: "'Syne', sans-serif", color: "#F0F0F0" }}
-            >
-              SDS
-            </span>
-            <span
-              className="text-xs font-medium"
-              style={{ color: "#606080", letterSpacing: "0.04em" }}
-            >
-              BIT Mesra
-            </span>
-          </div>
-        </div>
 
-        {/* Nav links */}
-        <div className="hidden md:flex items-center gap-8">
-          {["About", "Events", "Team"].map((link) => (
-            <a
-              key={link}
-              href={`#${link.toLowerCase()}`}
-              className="text-sm font-medium transition-colors duration-200"
-              style={{ color: "#A0A0B8" }}
-              onMouseEnter={(e) => (e.target.style.color = "#F0F0F0")}
-              onMouseLeave={(e) => (e.target.style.color = "#A0A0B8")}
-            >
-              {link}
-            </a>
-          ))}
-          <a
-            href="/tools"
-            className="text-sm font-semibold px-4 py-2 rounded-full transition-all duration-200"
-            style={{
-              background: "rgba(26,111,232,0.12)",
-              color: "#4D91F0",
-              border: "1px solid rgba(26,111,232,0.25)",
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = "rgba(26,111,232,0.22)";
-              e.currentTarget.style.borderColor = "rgba(26,111,232,0.5)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = "rgba(26,111,232,0.12)";
-              e.currentTarget.style.borderColor = "rgba(26,111,232,0.25)";
-            }}
-          >
-            AI Tools ✦
-          </a>
-        </div>
-      </motion.nav>
-
-      {/* ── Hero content ────────────────────────────────────────────────── */}
-      <div className="relative z-10 flex flex-col items-center justify-center flex-1 px-6 md:px-12 text-center">
+        {/* ── LEFT: Text content ── */}
         <motion.div
-          variants={containerVariants}
+          variants={stagger}
           initial="hidden"
           animate="visible"
-          className="flex flex-col items-center max-w-5xl mx-auto gap-6"
+          className="flex flex-col gap-6 lg:w-1/2 text-center lg:text-left"
         >
-          {/* Eyebrow label */}
-          <motion.div variants={fadeUpVariants}>
-            <span
-              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold tracking-widest uppercase"
-              style={{
-                background: "rgba(245,166,35,0.08)",
-                border: "1px solid rgba(245,166,35,0.25)",
-                color: "#F5A623",
-                letterSpacing: "0.12em",
-              }}
-            >
-              <span
-                className="w-1.5 h-1.5 rounded-full"
-                style={{ background: "#F5A623", boxShadow: "0 0 6px #F5A623" }}
-              />
-              Society for Data Science — BIT Mesra
+
+          {/* Badge */}
+          <motion.div variants={up}>
+            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold uppercase"
+              style={{ background: "rgba(245,166,35,0.08)", border: "1px solid rgba(245,166,35,0.25)", color: "#F5A623", letterSpacing: "0.12em" }}>
+              <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: "#F5A623", boxShadow: "0 0 6px #F5A623" }} />
+              Est. 2019 · BIT Mesra
             </span>
           </motion.div>
 
-          {/* Main headline */}
-          <motion.h1
-            variants={fadeUpVariants}
-            className="font-bold leading-[1.05] tracking-tight"
-            style={{
-              fontFamily: "'Syne', sans-serif",
-              fontSize: "clamp(2.6rem, 7vw, 5.5rem)",
-              color: "#F0F0F0",
-            }}
-          >
-            Where{" "}
-            <span
-              style={{
-                background:
-                  "linear-gradient(135deg, #4D91F0 0%, #1A6FE8 50%, #F5A623 100%)",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                backgroundClip: "text",
-              }}
-            >
-              Data
-            </span>{" "}
-            Meets
-            <br className="hidden sm:block" />{" "}
-            <span
-              style={{
-                background:
-                  "linear-gradient(135deg, #F5A623 0%, #FFBE5C 60%, #4D91F0 100%)",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                backgroundClip: "text",
-              }}
-            >
-              Innovation
+          {/* Headline */}
+          <motion.h1 variants={up} style={{ fontFamily: "'Syne', sans-serif", lineHeight: 1 }}>
+            <span className="block font-black" style={{ fontSize: "clamp(2.4rem, 5.5vw, 5rem)", color: "#F0F0F0" }}>
+              Building the
+            </span>
+            <span className="block font-black" style={{ fontSize: "clamp(2.4rem, 5.5vw, 5rem)", color: "#F0F0F0" }}>
+              next generation
+            </span>
+            <span className="block font-black" style={{
+              fontSize: "clamp(2.4rem, 5.5vw, 5rem)",
+              background: "linear-gradient(120deg, #4D91F0 0%, #1A6FE8 35%, #F5A623 100%)",
+              WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
+            }}>
+              of data scientists.
             </span>
           </motion.h1>
 
-          {/* Sub-headline */}
-          <motion.p
-            variants={fadeUpVariants}
-            className="max-w-xl mx-auto leading-relaxed"
-            style={{
-              fontFamily: "'DM Sans', sans-serif",
-              fontSize: "clamp(1rem, 2.2vw, 1.2rem)",
-              color: "#A0A0B8",
-            }}
-          >
-            The official hub for data enthusiasts at BIT Mesra — building skills,
-            running workshops, shipping projects, and shaping futures through
-            the power of data science.
+          {/* Body */}
+          <motion.p variants={up} className="max-w-md mx-auto lg:mx-0 leading-relaxed"
+            style={{ color: "#808098", fontFamily: "'DM Sans', sans-serif", fontSize: "1.05rem" }}>
+            We run workshops, ship projects, crack hackathons, and connect students
+            with the data-driven world — from first model to first placement.
           </motion.p>
 
-          {/* Stats row */}
-          <motion.div
-            variants={fadeUpVariants}
-            className="flex items-center gap-6 md:gap-10"
-          >
-            {[
-              { value: "200+", label: "Members" },
-              { value: "30+", label: "Events" },
-              { value: "50+", label: "Projects" },
-            ].map(({ value, label }, i) => (
-              <div key={label} className="flex items-center gap-6 md:gap-10">
-                <div className="flex flex-col items-center">
-                  <span
-                    className="font-bold"
-                    style={{
-                      fontFamily: "'Syne', sans-serif",
-                      fontSize: "clamp(1.4rem, 3vw, 2rem)",
-                      background: "linear-gradient(135deg, #F0F0F0, #A0A0B8)",
-                      WebkitBackgroundClip: "text",
-                      WebkitTextFillColor: "transparent",
-                      backgroundClip: "text",
-                    }}
-                  >
-                    {value}
-                  </span>
-                  <span
-                    className="text-xs font-medium uppercase tracking-widest"
-                    style={{ color: "#606080", letterSpacing: "0.1em" }}
-                  >
-                    {label}
-                  </span>
+          {/* Stats */}
+          <motion.div variants={up} className="flex items-center gap-8 justify-center lg:justify-start">
+            {[["200+","Members"],["30+","Events"],["50+","Projects"]].map(([v,l], i, arr) => (
+              <div key={l} className="flex items-center gap-8">
+                <div className="flex flex-col">
+                  <span style={{ fontFamily: "'Syne', sans-serif", fontSize: "1.75rem", fontWeight: 800, color: "#F0F0F0" }}>{v}</span>
+                  <span style={{ fontSize: "0.72rem", color: "#3A3A5A", letterSpacing: "0.1em", textTransform: "uppercase" }}>{l}</span>
                 </div>
-                {i < 2 && (
-                  <div
-                    className="hidden sm:block w-px h-8 self-center"
-                    style={{
-                      background:
-                        "linear-gradient(to bottom, transparent, #2A2A4A, transparent)",
-                    }}
-                  />
-                )}
+                {i < arr.length - 1 && <div className="w-px h-8" style={{ background: "linear-gradient(to bottom, transparent, #2A2A4A, transparent)" }} />}
               </div>
             ))}
           </motion.div>
 
-          {/* CTA buttons */}
-          <motion.div
-            variants={fadeUpVariants}
-            className="flex flex-col sm:flex-row items-center gap-4 mt-2"
-          >
-            {/* Primary CTA */}
-            <motion.a
-              href="/tools"
-              className="group relative inline-flex items-center gap-2.5 px-7 py-3.5 rounded-full font-semibold text-white overflow-hidden"
-              style={{
-                fontFamily: "'DM Sans', sans-serif",
-                fontSize: "0.95rem",
-                background: "linear-gradient(135deg, #1A6FE8, #1258C0)",
-                boxShadow: "0 0 0 1px rgba(26,111,232,0.4), 0 4px 24px rgba(26,111,232,0.3)",
-              }}
-              whileHover={{ scale: 1.03, y: -2 }}
+          {/* CTAs */}
+          <motion.div variants={up} className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
+            <motion.a href="/tools"
+              className="group relative inline-flex items-center justify-center gap-2 font-bold overflow-hidden rounded-full"
+              style={{ background: "#1A6FE8", color: "#fff", padding: "0.8rem 1.75rem",
+                boxShadow: "0 0 0 1px rgba(26,111,232,0.5), 0 4px 24px rgba(26,111,232,0.4)",
+                fontFamily: "'DM Sans', sans-serif", fontSize: "0.95rem" }}
+              whileHover={{ scale: 1.04, y: -2 }}
               whileTap={{ scale: 0.97 }}
               transition={{ type: "spring", stiffness: 400, damping: 20 }}
             >
-              {/* Hover gradient sweep */}
-              <span
-                className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                style={{
-                  background:
-                    "linear-gradient(135deg, #4D91F0, #1A6FE8, #F5A623)",
-                }}
-              />
-              <span className="relative z-10 flex items-center gap-2.5">
+              <span className="relative z-10 flex items-center gap-2">
                 Explore AI Tools
-                <ArrowRight
-                  size={16}
-                  className="transition-transform duration-200 group-hover:translate-x-1"
-                />
+                <ArrowRight size={15} className="group-hover:translate-x-1 transition-transform duration-200" />
               </span>
+              <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                style={{ background: "linear-gradient(135deg, #1A6FE8, #4D91F0, #F5A623)" }} />
             </motion.a>
 
-            {/* Secondary CTA */}
-            <motion.a
-              href="#about"
-              className="group inline-flex items-center gap-2.5 px-7 py-3.5 rounded-full font-semibold transition-all duration-200"
-              style={{
-                fontFamily: "'DM Sans', sans-serif",
-                fontSize: "0.95rem",
-                color: "#A0A0B8",
-                background: "rgba(255,255,255,0.03)",
-                border: "1px solid rgba(255,255,255,0.10)",
-              }}
-              whileHover={{ scale: 1.03, y: -2 }}
+            <motion.a href="#about"
+              onClick={e => { e.preventDefault(); document.getElementById("about")?.scrollIntoView({ behavior: "smooth" }); }}
+              className="inline-flex items-center justify-center gap-2 rounded-full font-semibold"
+              style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.10)",
+                color: "#808098", padding: "0.8rem 1.75rem", fontFamily: "'DM Sans', sans-serif", fontSize: "0.95rem" }}
+              whileHover={{ scale: 1.04, y: -2, color: "#F0F0F0", borderColor: "rgba(26,111,232,0.4)" }}
               whileTap={{ scale: 0.97 }}
               transition={{ type: "spring", stiffness: 400, damping: 20 }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = "rgba(26,111,232,0.4)";
-                e.currentTarget.style.color = "#F0F0F0";
-                e.currentTarget.style.background = "rgba(26,111,232,0.06)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = "rgba(255,255,255,0.10)";
-                e.currentTarget.style.color = "#A0A0B8";
-                e.currentTarget.style.background = "rgba(255,255,255,0.03)";
-              }}
             >
-              Learn About Us
+              About SDS
             </motion.a>
           </motion.div>
         </motion.div>
-      </div>
 
-      {/* ── Bottom fade + scroll cue ─────────────────────────────────────── */}
-      <div className="relative z-10 flex flex-col items-center pb-10 gap-3">
-        {/* Scroll cue */}
-        <motion.button
-          onClick={handleScrollDown}
-          className="flex flex-col items-center gap-2 cursor-pointer group"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.6, duration: 0.6 }}
-          aria-label="Scroll to next section"
+        {/* ── RIGHT: Animated neural network ── */}
+        <motion.div
+          initial={{ opacity: 0, x: 40 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.9, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
+          className="lg:w-1/2 relative"
+          style={{ height: "clamp(320px, 45vh, 500px)" }}
         >
-          <span
-            className="text-xs font-medium tracking-widest uppercase"
-            style={{ color: "#3A3A5A", letterSpacing: "0.14em" }}
-          >
-            Scroll
-          </span>
-          <motion.div
-            animate={{ y: [0, 6, 0] }}
-            transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
-          >
-            <ChevronDown
-              size={18}
-              className="transition-colors duration-200 group-hover:text-blue-400"
-              style={{ color: "#3A3A5A" }}
-            />
-          </motion.div>
-        </motion.button>
+          {/* Glow behind network */}
+          <div className="absolute inset-0 pointer-events-none"
+            style={{ background: "radial-gradient(ellipse 70% 70% at 50% 50%, rgba(26,111,232,0.07) 0%, transparent 70%)" }}
+          />
+
+          <NeuralNet />
+
+          {/* Floating metric chips */}
+          {CHIPS.map((chip, i) => (
+            <motion.div
+              key={i}
+              className="absolute px-3 py-1.5 rounded-lg text-xs font-semibold"
+              style={{
+                left: chip.x, top: chip.y,
+                background: `${chip.color}12`,
+                border: `1px solid ${chip.color}30`,
+                color: chip.color,
+                fontFamily: "'JetBrains Mono', monospace",
+                backdropFilter: "blur(8px)",
+              }}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: [0, -5, 0] }}
+              transition={{
+                opacity: { delay: chip.delay, duration: 0.5 },
+                y: { delay: chip.delay, duration: 3 + i * 0.4, repeat: Infinity, ease: "easeInOut" },
+              }}
+            >
+              {chip.label}
+            </motion.div>
+          ))}
+        </motion.div>
       </div>
 
-      {/* ── Bottom edge gradient ─────────────────────────────────────────── */}
-      <div
-        aria-hidden="true"
-        className="absolute bottom-0 left-0 right-0 h-32 pointer-events-none"
-        style={{
-          background:
-            "linear-gradient(to top, #050510, transparent)",
-        }}
-      />
-
-      {/* ── Inline keyframes ─────────────────────────────────────────────── */}
-      <style>{`
-        @keyframes orbDrift {
-          0%   { transform: translate(0,    0)    scale(1);    }
-          33%  { transform: translate(3%,  -4%)   scale(1.06); }
-          66%  { transform: translate(-2%,  3%)   scale(0.96); }
-          100% { transform: translate(4%,   1%)   scale(1.03); }
-        }
-      `}</style>
+      {/* Bottom fade */}
+      <div aria-hidden className="absolute bottom-0 left-0 right-0 h-24 pointer-events-none"
+        style={{ background: "linear-gradient(to top, #050510, transparent)" }} />
     </section>
   );
 }
