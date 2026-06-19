@@ -150,20 +150,14 @@ export default function Footer() {
             <div className="flex items-center gap-3">
               <img src={sdsLogo} alt="SDS" style={{ width: 44, height: 44, objectFit: "contain" }} />
               <div>
-                <div style={{ fontFamily: "'Syne', sans-serif", fontSize: "1.1rem", fontWeight: 900, color: "#F0F0F0", letterSpacing: "-0.01em" }}>
+                <div style={{ fontFamily: "Syne, sans-serif", fontSize: "1rem", fontWeight: 800, color: "#F0F0F0", letterSpacing: "-0.01em", lineHeight: 1.2 }}>
                   Society for Data Science
                 </div>
-                <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "0.62rem", color: "#3A3A5A", letterSpacing: "0.12em", marginTop: 2 }}>
-                  BIT MESRA · EST. 2019
+                <div style={{ fontFamily: "JetBrains Mono, monospace", fontSize: "0.6rem", color: "#3A3A5A", letterSpacing: "0.14em", marginTop: 3, textTransform: "uppercase" }}>
+                  BIT Mesra · Est. 2019
                 </div>
               </div>
             </div>
-
-            {/* Tagline */}
-            <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "0.9rem", color: "#606080", lineHeight: 1.7, maxWidth: 320 }}>
-              Where students become data scientists — through workshops, research,
-              hackathons, and real-world projects that matter.
-            </p>
 
             {/* Social icons — horizontal row */}
             <div className="flex items-center gap-3">
@@ -203,10 +197,10 @@ export default function Footer() {
               <div className="absolute top-0 left-0 right-0 h-px"
                 style={{ background: "linear-gradient(90deg, #1A6FE8, #F5A623)" }} />
               <div>
-                <h3 style={{ fontFamily: "'Syne', sans-serif", fontSize: "1rem", fontWeight: 800, color: "#F0F0F0", lineHeight: 1.2 }}>
+                <h3 style={{ fontFamily: "Syne, sans-serif", fontSize: "1rem", fontWeight: 800, color: "#F0F0F0", lineHeight: 1.2 }}>
                   Ready to build with data?
                 </h3>
-                <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "0.78rem", color: "#606080", marginTop: "0.4rem", lineHeight: 1.6 }}>
+                <p style={{ fontFamily: "DM Sans, sans-serif", fontSize: "0.8rem", color: "#606080", marginTop: "0.4rem", lineHeight: 1.6 }}>
                   Join 200+ students building real projects, attending workshops, and getting placed.
                 </p>
               </div>

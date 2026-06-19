@@ -5,27 +5,27 @@ import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
 
 const TEAM = [
-  { name: "Vaibhav Raj",       role: "President",         domain: "ML & Systems",      img: null, gradient: "linear-gradient(135deg,#1A6FE8,#4D91F0)", initials: "VR", linkedin: "#", github: "#" },
-  { name: "Himanshu Pravash",  role: "Vice President",    domain: "Data Engineering",  img: null, gradient: "linear-gradient(135deg,#F5A623,#FFBE5C)", initials: "HP", linkedin: "#", github: "#" },
-  { name: "Shanvi Vats",       role: "Vice President",    domain: "Research",           img: null, gradient: "linear-gradient(135deg,#1258C0,#1A6FE8)", initials: "SV", linkedin: "#", github: "#" },
-  { name: "Lakshay Mittal",    role: "Director",          domain: "Events & Outreach", img: null, gradient: "linear-gradient(135deg,#D4880A,#F5A623)", initials: "LM", linkedin: "#", github: "#" },
-  { name: "Devashish Komiya",  role: "Director",          domain: "Technical",         img: null, gradient: "linear-gradient(135deg,#1A6FE8,#1258C0)", initials: "DK", linkedin: "#", github: "#" },
-  { name: "Vedant Pasari",     role: "General Secretary", domain: "Operations",        img: null, gradient: "linear-gradient(135deg,#F5A623,#D4880A)", initials: "VP", linkedin: "#", github: "#" },
-  { name: "Aditi Kumari",      role: "Joint Secretary",   domain: "Coordination",      img: null, gradient: "linear-gradient(135deg,#4D91F0,#1A6FE8)", initials: "AK", linkedin: "#", github: "#" },
+  { name: "Vaibhav Raj", role: "President", domain: "ML & Systems", img: null, gradient: "linear-gradient(135deg,#1A6FE8,#4D91F0)", initials: "VR", linkedin: "#", github: "#" },
+  { name: "Himanshu Pravash", role: "Vice President", domain: "Data Engineering", img: null, gradient: "linear-gradient(135deg,#F5A623,#FFBE5C)", initials: "HP", linkedin: "#", github: "#" },
+  { name: "Shanvi Vats", role: "Vice President", domain: "Research", img: null, gradient: "linear-gradient(135deg,#1258C0,#1A6FE8)", initials: "SV", linkedin: "#", github: "#" },
+  { name: "Lakshay Mittal", role: "Director", domain: "Events & Outreach", img: null, gradient: "linear-gradient(135deg,#D4880A,#F5A623)", initials: "LM", linkedin: "#", github: "#" },
+  { name: "Devashish Komiya", role: "Director", domain: "Technical", img: null, gradient: "linear-gradient(135deg,#1A6FE8,#1258C0)", initials: "DK", linkedin: "#", github: "#" },
+  { name: "Vedant Pasari", role: "General Secretary", domain: "Operations", img: null, gradient: "linear-gradient(135deg,#F5A623,#D4880A)", initials: "VP", linkedin: "#", github: "#" },
+  { name: "Aditi Kumari", role: "Joint Secretary", domain: "Coordination", img: null, gradient: "linear-gradient(135deg,#4D91F0,#1A6FE8)", initials: "AK", linkedin: "#", github: "#" },
 ];
 
-const ROLES_ORDER = ["President","Vice President","Director","General Secretary","Joint Secretary"];
+const ROLES_ORDER = ["President", "Vice President", "Director", "General Secretary", "Joint Secretary"];
 
 // ─── Floating word cloud in hero ──────────────────────────────────────────────
 const FLOATING_WORDS = [
-  { text: "Machine Learning", x: "8%",  y: "18%", delay: 0,   size: "0.8rem",  color: "#1A6FE8", dur: 7  },
-  { text: "Python",           x: "72%", y: "12%", delay: 0.5, size: "0.75rem", color: "#F5A623", dur: 9  },
-  { text: "Data Science",     x: "82%", y: "40%", delay: 1,   size: "0.85rem", color: "#4D91F0", dur: 6  },
-  { text: "Research",         x: "5%",  y: "65%", delay: 1.5, size: "0.7rem",  color: "#F5A623", dur: 8  },
-  { text: "Deep Learning",    x: "75%", y: "72%", delay: 0.8, size: "0.78rem", color: "#1A6FE8", dur: 10 },
-  { text: "PyTorch",          x: "12%", y: "82%", delay: 1.2, size: "0.72rem", color: "#4D91F0", dur: 7  },
-  { text: "Hackathons",       x: "55%", y: "85%", delay: 0.3, size: "0.76rem", color: "#F5A623", dur: 9  },
-  { text: "NLP",              x: "88%", y: "22%", delay: 1.8, size: "0.9rem",  color: "#1A6FE8", dur: 6  },
+  { text: "Machine Learning", x: "8%", y: "18%", delay: 0, size: "0.8rem", color: "#1A6FE8", dur: 7 },
+  { text: "Python", x: "72%", y: "12%", delay: 0.5, size: "0.75rem", color: "#F5A623", dur: 9 },
+  { text: "Data Science", x: "82%", y: "40%", delay: 1, size: "0.85rem", color: "#4D91F0", dur: 6 },
+  { text: "Research", x: "5%", y: "65%", delay: 1.5, size: "0.7rem", color: "#F5A623", dur: 8 },
+  { text: "Deep Learning", x: "75%", y: "72%", delay: 0.8, size: "0.78rem", color: "#1A6FE8", dur: 10 },
+  { text: "PyTorch", x: "12%", y: "82%", delay: 1.2, size: "0.72rem", color: "#4D91F0", dur: 7 },
+  { text: "Hackathons", x: "55%", y: "85%", delay: 0.3, size: "0.76rem", color: "#F5A623", dur: 9 },
+  { text: "NLP", x: "88%", y: "22%", delay: 1.8, size: "0.9rem", color: "#1A6FE8", dur: 6 },
 ];
 
 function TeamCard({ member, index }) {
@@ -89,9 +89,9 @@ function TeamCard({ member, index }) {
         {/* Social links — reveal on hover */}
         <div className="flex items-center gap-2 translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
           {[
-            { Icon: Linkedin, href: member.linkedin, color: "#4D91F0", bg: "rgba(26,111,232,0.12)" },
-            { Icon: Github,   href: member.github,   color: "#A0A0B8", bg: "rgba(255,255,255,0.06)" },
-            { Icon: ExternalLink, href: "#",          color: "#F5A623", bg: "rgba(245,166,35,0.10)" },
+            { Icon: Briefcase, href: member.linkedin, color: "#4D91F0", bg: "rgba(26,111,232,0.12)" },
+            { Icon: Code2, href: member.github, color: "#A0A0B8", bg: "rgba(255,255,255,0.06)" },
+            { Icon: ExternalLink, href: "#", color: "#F5A623", bg: "rgba(245,166,35,0.10)" },
           ].map(({ Icon, href, color, bg }) => (
             <a key={href + color} href={href} target="_blank" rel="noopener noreferrer"
               className="w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-200"
@@ -132,8 +132,10 @@ export default function TeamPage() {
           <motion.span
             key={i}
             className="absolute font-semibold pointer-events-none hidden lg:block"
-            style={{ left: w.x, top: w.y, color: w.color, fontSize: w.size, opacity: 0.35,
-              fontFamily: "'JetBrains Mono', monospace", whiteSpace: "nowrap" }}
+            style={{
+              left: w.x, top: w.y, color: w.color, fontSize: w.size, opacity: 0.35,
+              fontFamily: "'JetBrains Mono', monospace", whiteSpace: "nowrap"
+            }}
             animate={{ y: [0, -10, 0], opacity: [0.25, 0.45, 0.25] }}
             transition={{ duration: w.dur, delay: w.delay, repeat: Infinity, ease: "easeInOut" }}
           >
