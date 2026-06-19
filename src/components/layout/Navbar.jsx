@@ -2,13 +2,13 @@ import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, Sparkles } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
-import sdsLogo from "../../assets/sds-logo.jpg";
+import sdsLogo from "../../assets/sds-logo.png";
 
 const NAV_LINKS = [
-  { label: "Home",   type: "route",  to: "/" },
-  { label: "About",  type: "scroll", to: "#about" },
-  { label: "Events", type: "scroll", to: "#events" },
-  { label: "Team",   type: "scroll", to: "#team" },
+  { label: "Home",   type: "route", to: "/"       },
+  { label: "About",  type: "route", to: "/about"  },
+  { label: "Events", type: "route", to: "/events" },
+  { label: "Team",   type: "route", to: "/team"   },
 ];
 
 const SCROLL_THRESHOLD = 80;
