@@ -3,10 +3,12 @@ import Home        from "./pages/Home";
 import EventsPage  from "./pages/EventsPage";
 import TeamPage    from "./pages/TeamPage";
 import AboutPage   from "./pages/AboutPage";
+import MouseFollower from "./components/ui/MouseFollower";  
 
 export default function App() {
   return (
     <BrowserRouter>
+      <MouseFollower />  {/* Add the MouseFollower component here */}
       <Routes>
         <Route path="/"        element={<Home />}       />
         <Route path="/events"  element={<EventsPage />} />

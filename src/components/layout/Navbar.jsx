@@ -5,10 +5,11 @@ import { Link, useLocation } from "react-router-dom";
 import sdsLogo from "../../assets/sds-logo.png";
 
 const NAV_LINKS = [
-  { label: "Home",   type: "route", to: "/"       },
-  { label: "About",  type: "route", to: "/about"  },
-  { label: "Events", type: "route", to: "/events" },
-  { label: "Team",   type: "route", to: "/team"   },
+  { label: "Home",    type: "route", to: "/"       },
+  { label: "Events",  type: "route", to: "/events" },
+  { label: "Team",    type: "route", to: "/team"   },
+  { label: "About",   type: "route", to: "/about"  },
+  { label: "AI Tools",type: "route", to: "/tools", special: true },
 ];
 
 const SCROLL_THRESHOLD = 80;
@@ -54,10 +55,10 @@ export default function Navbar() {
     setMobileOpen(false);
   }, []);
 
-  const isActive = (link) =>
-    link.type === "scroll"
-      ? activeSection === link.to.replace("#", "")
-      : activeSection === "hero" && link.to === "/";
+  const isActive = (link) => {
+    if (link.to === "/") return location.pathname === "/" && activeSection === "hero";
+    return location.pathname === link.to;
+  };
 
   return (
     <>
@@ -145,6 +146,35 @@ export default function Navbar() {
             <div className="hidden md:flex items-center gap-1">
               {NAV_LINKS.map((link) => {
                 const active = isActive(link);
+                if (link.special) {
+                  return (
+                    <Link key={link.label} to={link.to} style={{ textDecoration: "none" }}>
+                      <motion.div
+                        animate={{
+                          background: active
+                            ? "rgba(245,166,35,0.22)"
+                            : scrolled ? "rgba(245,166,35,0.10)" : "rgba(245,166,35,0.07)",
+                          paddingLeft: scrolled ? "0.9rem" : "1rem",
+                          paddingRight: scrolled ? "0.9rem" : "1rem",
+                          paddingTop: scrolled ? "0.35rem" : "0.4rem",
+                          paddingBottom: scrolled ? "0.35rem" : "0.4rem",
+                        }}
+                        whileHover={{ background: "rgba(245,166,35,0.22)", scale: 1.04 }}
+                        transition={{ duration: 0.2 }}
+                        className="flex items-center gap-1.5 rounded-full font-bold text-sm cursor-pointer"
+                        style={{
+                          color: "#F5A623",
+                          border: `1px solid rgba(245,166,35,${active ? "0.55" : "0.28"})`,
+                          boxShadow: active ? "0 0 16px rgba(245,166,35,0.25)" : "none",
+                          fontFamily: "'DM Sans', sans-serif",
+                        }}
+                      >
+                        <Sparkles size={12} strokeWidth={2.5} />
+                        AI Tools
+                      </motion.div>
+                    </Link>
+                  );
+                }
                 return (
                   <Link
                     key={link.label}
@@ -169,7 +199,6 @@ export default function Navbar() {
                       style={{ padding: scrolled ? "0.35rem 0.9rem" : "0.4rem 0.85rem" }}
                     >
                       {link.label}
-                      {/* Orange underline dot for active — only when NOT scrolled */}
                       {active && !scrolled && (
                         <motion.span
                           layoutId="active-dot"
@@ -183,26 +212,6 @@ export default function Navbar() {
               })}
             </div>
 
-            {/* AI Tools pill button */}
-            <div className="hidden md:flex items-center">
-              <Link to="/tools">
-                <motion.div
-                  animate={
-                    scrolled
-                      ? { background: "rgba(26,111,232,0.20)", paddingLeft: "0.9rem", paddingRight: "0.9rem", paddingTop: "0.4rem", paddingBottom: "0.4rem" }
-                      : { background: "rgba(26,111,232,0.12)", paddingLeft: "1rem", paddingRight: "1rem", paddingTop: "0.5rem", paddingBottom: "0.5rem" }
-                  }
-                  whileHover={{ background: "rgba(26,111,232,0.32)", scale: 1.03 }}
-                  whileTap={{ scale: 0.97 }}
-                  transition={{ duration: 0.2 }}
-                  className="flex items-center gap-2 rounded-full font-semibold cursor-pointer"
-                  style={{ border: "1px solid rgba(26,111,232,0.35)", color: "#4D91F0", fontSize: "0.85rem", boxShadow: "0 0 16px rgba(26,111,232,0.15)" }}
-                >
-                  <Sparkles size={13} strokeWidth={2} />
-                  AI Tools
-                </motion.div>
-              </Link>
-            </div>
 
             {/* Mobile hamburger */}
             <button
