@@ -1,11 +1,34 @@
-import Hero from "../components/home/Hero";
-
+import Navbar        from "../components/layout/Navbar";
+import Hero          from "../components/home/Hero";
+import StatsSection  from "../components/home/StatsSection";
+import WhatWeDo      from "../components/home/WhatWeDo";
+import EventsSection from "../components/home/EventsSection";
+import TeamSection   from "../components/home/TeamSection";
+ 
 export default function Home() {
   return (
-    <main>
-      <Hero />
-      {/* add sections below as you build them */}
-      <section id="about" />
-    </main>
+    <div style={{ background: "#050510" }}>
+      <Navbar />
+      
+      <section id="hero">
+        <Hero />
+      </section>
+ 
+      <section id="about">
+        <StatsSection />
+      </section>
+ 
+      <section id="what-we-do">
+        <WhatWeDo />
+      </section>
+ 
+      <section id="events">
+        <EventsSection />
+      </section>
+ 
+      <section id="team">
+        <TeamSection />
+      </section>
+    </div>
   );
 }
