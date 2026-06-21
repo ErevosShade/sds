@@ -1,7 +1,8 @@
 import { useRef } from "react";
+import { Link } from "react-router-dom";
 import { motion, useInView, useScroll, useTransform } from "framer-motion";
 import { Zap, Users, Target, BookOpen, ArrowRight } from "lucide-react";
-import Navbar from "../components/layout/Navbar";
+
 import Footer from "../components/layout/Footer";
 
 const PILLARS = [
@@ -21,43 +22,78 @@ const TIMELINE = [
 
 function TimelineItem({ item, index }) {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-80px" });
+  const isInView = useInView(ref, { once: true, margin: "-60px" });
   const isLeft = index % 2 === 0;
 
+  const dot = (
+    <motion.div
+      initial={{ scale: 0 }}
+      animate={isInView ? { scale: 1 } : {}}
+      transition={{ delay: 0.2, type: "spring", stiffness: 300 }}
+      className="relative flex-shrink-0 w-5 h-5 rounded-full z-10"
+      style={{ background: item.color, border: "3px solid #050510", boxShadow: `0 0 16px ${item.color}80` }}
+    />
+  );
+
+  const content = (textAlign) => (
+    <motion.div
+      initial={{ opacity: 0, x: isLeft ? -30 : 30 }}
+      animate={isInView ? { opacity: 1, x: 0 } : {}}
+      transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+      className="flex-1 px-6 md:px-8"
+      style={{ textAlign }}
+    >
+      <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "0.7rem", color: item.color, fontWeight: 700, letterSpacing: "0.1em" }}>
+        {item.year}
+      </span>
+      <h3 style={{ fontFamily: "'Syne', sans-serif", fontSize: "1.05rem", fontWeight: 800, color: "#F0F0F0", marginTop: "0.2rem" }}>
+        {item.event}
+      </h3>
+      <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "0.82rem", color: "#808098", marginTop: "0.3rem", lineHeight: 1.55 }}>
+        {item.desc}
+      </p>
+    </motion.div>
+  );
+
   return (
-    <div ref={ref} className={`relative flex items-center gap-0 ${isLeft ? "flex-row" : "flex-row-reverse"}`}
-      style={{ marginBottom: "2.5rem" }}>
+    <div ref={ref} style={{ marginBottom: "2rem" }}>
 
-      {/* Content */}
-      <motion.div
-        initial={{ opacity: 0, x: isLeft ? -40 : 40 }}
-        animate={isInView ? { opacity: 1, x: 0 } : {}}
-        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-        className="flex-1 px-8"
-        style={{ textAlign: isLeft ? "right" : "left" }}
-      >
-        <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "0.72rem", color: item.color, fontWeight: 700, letterSpacing: "0.1em" }}>
-          {item.year}
-        </span>
-        <h3 style={{ fontFamily: "'Syne', sans-serif", fontSize: "1.1rem", fontWeight: 800, color: "#F0F0F0", marginTop: "0.2rem" }}>
-          {item.event}
-        </h3>
-        <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "0.85rem", color: "#808098", marginTop: "0.35rem", lineHeight: 1.55 }}>
-          {item.desc}
-        </p>
-      </motion.div>
+      {/* ── Mobile: always left-aligned ── */}
+      <div className="flex sm:hidden items-start gap-3 pl-2">
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", paddingTop: 3 }}>
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={isInView ? { scale: 1 } : {}}
+            transition={{ delay: 0.15, type: "spring", stiffness: 300 }}
+            style={{ width: 14, height: 14, borderRadius: "50%", background: item.color,
+              border: "2.5px solid #050510", flexShrink: 0, boxShadow: `0 0 12px ${item.color}80` }}
+          />
+        </div>
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={isInView ? { opacity: 1, x: 0 } : {}}
+          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+          style={{ flex: 1 }}
+        >
+          <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "0.65rem", color: item.color, fontWeight: 700, letterSpacing: "0.1em" }}>
+            {item.year}
+          </span>
+          <h3 style={{ fontFamily: "'Syne', sans-serif", fontSize: "1rem", fontWeight: 800, color: "#F0F0F0", marginTop: "0.15rem" }}>
+            {item.event}
+          </h3>
+          <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "0.8rem", color: "#808098", marginTop: "0.25rem", lineHeight: 1.55 }}>
+            {item.desc}
+          </p>
+        </motion.div>
+      </div>
 
-      {/* Node */}
-      <motion.div
-        initial={{ scale: 0 }}
-        animate={isInView ? { scale: 1 } : {}}
-        transition={{ delay: 0.2, type: "spring", stiffness: 300 }}
-        className="relative flex-shrink-0 w-5 h-5 rounded-full z-10"
-        style={{ background: item.color, border: "3px solid #050510", boxShadow: `0 0 16px ${item.color}80` }}
-      />
+      {/* ── Desktop: alternating left/right ── */}
+      <div className={`hidden sm:flex items-center gap-0 ${isLeft ? "flex-row" : "flex-row-reverse"}`}>
+        {content(isLeft ? "right" : "left")}
+        {dot}
+        <div className="flex-1 px-6 md:px-8" />
+      </div>
 
-      {/* Empty side */}
-      <div className="flex-1 px-8" />
     </div>
   );
 }
@@ -69,7 +105,7 @@ export default function AboutPage() {
 
   return (
     <div style={{ background: "#050510", minHeight: "100vh" }}>
-      <Navbar />
+      
 
       {/* ── Hero ── */}
       <motion.section ref={heroRef} className="relative flex items-center justify-center overflow-hidden"
@@ -121,16 +157,16 @@ export default function AboutPage() {
 
           <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.45, duration: 0.6 }}
             className="flex items-center justify-center gap-4 mt-8">
-            <a href="/tools"
+            <Link to="/tools"
               className="inline-flex items-center gap-2 px-6 py-3 rounded-full font-bold text-sm"
               style={{ background: "#1A6FE8", color: "#fff", boxShadow: "0 0 24px rgba(26,111,232,0.4)", textDecoration: "none", fontFamily: "'DM Sans', sans-serif" }}>
               Try AI Tools <ArrowRight size={14} />
-            </a>
-            <a href="/team"
+            </Link>
+            <Link to="/team"
               className="inline-flex items-center gap-2 px-6 py-3 rounded-full font-bold text-sm"
               style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.10)", color: "#808098", textDecoration: "none", fontFamily: "'DM Sans', sans-serif" }}>
               Meet the team
-            </a>
+            </Link>
           </motion.div>
         </motion.div>
       </motion.section>
@@ -176,8 +212,12 @@ export default function AboutPage() {
 
         {/* Spine */}
         <div className="relative">
-          <div className="absolute left-1/2 top-0 bottom-0 w-px"
+          {/* Desktop: center spine */}
+          <div className="hidden sm:block absolute left-1/2 top-0 bottom-0 w-px"
             style={{ transform: "translateX(-50%)", background: "linear-gradient(to bottom, transparent, rgba(26,111,232,0.3), rgba(245,166,35,0.3), transparent)" }} />
+          {/* Mobile: left spine */}
+          <div className="block sm:hidden absolute top-0 bottom-0 w-px"
+            style={{ left: "0.6rem", background: "linear-gradient(to bottom, transparent, rgba(26,111,232,0.25), rgba(245,166,35,0.25), transparent)" }} />
           {TIMELINE.map((item, i) => (
             <TimelineItem key={item.year} item={item} index={i} />
           ))}

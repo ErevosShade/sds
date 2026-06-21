@@ -1,7 +1,7 @@
 import { useRef } from "react";
 import { motion, useInView, useScroll, useTransform } from "framer-motion";
 import { ExternalLink, Code2, Briefcase, ArrowUpRight } from "lucide-react";
-import Navbar from "../components/layout/Navbar";
+
 import Footer from "../components/layout/Footer";
 
 const TEAM = [
@@ -119,7 +119,7 @@ export default function TeamPage() {
 
   return (
     <div style={{ background: "#050510", minHeight: "100vh" }}>
-      <Navbar />
+      
 
       {/* ── Hero ── */}
       <motion.section

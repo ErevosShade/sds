@@ -6,7 +6,6 @@ import {
   Briefcase, Code2, Clock, Target, Zap,
   ChevronDown, ChevronUp, Star, AlertCircle,
 } from "lucide-react";
-import { Link } from "react-router-dom";
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
@@ -411,14 +410,6 @@ export default function RoadmapPage() {
 
       <div style={{ position: "relative", zIndex: 10, maxWidth: 680, margin: "0 auto", padding: "0 1rem 6rem" }}>
 
-        {/* Back link */}
-        <Link to="/" style={{ display: "inline-flex", alignItems: "center", gap: "0.35rem",
-          textDecoration: "none", fontFamily: "DM Sans,sans-serif", fontSize: "0.78rem", color: "#3A3A5A",
-          marginBottom: "2rem", transition: "color 0.2s" }}
-          onMouseEnter={e => e.currentTarget.style.color = "#A0A0C0"}
-          onMouseLeave={e => e.currentTarget.style.color = "#3A3A5A"}>
-          <ArrowLeft size={12} /> Back to SDS
-        </Link>
 
         {/* ── Hero ── */}
         <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}

@@ -1,7 +1,7 @@
 import { useState, useRef } from "react";
 import { motion, useInView, AnimatePresence } from "framer-motion";
 import { CalendarDays, Clock, MapPin, ArrowUpRight, Zap } from "lucide-react";
-import Navbar from "../components/layout/Navbar";
+
 import Footer from "../components/layout/Footer";
 
 const EVENTS = [
@@ -106,7 +106,7 @@ function FeaturedCard({ event }) {
           {/* Big ghost text */}
           <span aria-hidden style={{
             position: "absolute", fontFamily: "Syne, sans-serif", fontWeight: 900,
-            fontSize: "8rem", color: `${event.accent}06`, lineHeight: 1,
+            fontSize: "clamp(4rem, 12vw, 8rem)", color: `${event.accent}06`, lineHeight: 1,
             letterSpacing: "-0.04em", userSelect: "none",
           }}>NEXT</span>
         </div>
@@ -124,7 +124,7 @@ function FeaturedCard({ event }) {
           </div>
 
           <div>
-            <h2 style={{ fontFamily: "Syne, sans-serif", fontSize: "1.8rem", fontWeight: 900, color: "#F0F0F0", lineHeight: 1.1, marginBottom: "0.4rem" }}>
+            <h2 style={{ fontFamily: "Syne, sans-serif", fontSize: "clamp(1.25rem, 3.5vw, 1.8rem)", fontWeight: 900, color: "#F0F0F0", lineHeight: 1.1, marginBottom: "0.4rem" }}>
               {event.title}
             </h2>
             <p style={{ fontFamily: "DM Sans, sans-serif", fontSize: "0.85rem", color: event.accent, marginBottom: "1rem" }}>{event.subtitle}</p>
@@ -239,7 +239,7 @@ export default function EventsPage() {
 
   return (
     <div style={{ background: "#050510", minHeight: "100vh" }}>
-      <Navbar />
+      
       <main style={{ paddingTop: 100, paddingBottom: "5rem" }}>
 
         {/* Page header */}

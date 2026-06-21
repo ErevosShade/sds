@@ -299,12 +299,12 @@ export default function Hero() {
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.8, duration: 0.6 }}
-          className="flex items-center gap-10"
+          className="flex items-center gap-5 sm:gap-10"
         >
           {[["200+","Members"],["30+","Events"],["50+","Projects"]].map(([v, l], i, arr) => (
-            <div key={l} className="flex items-center gap-10">
+            <div key={l} className="flex items-center gap-5 sm:gap-10">
               <div className="flex flex-col items-center gap-0.5">
-                <span style={{ fontFamily: "'Syne', sans-serif", fontSize: "1.6rem", fontWeight: 800, color: "#F0F0F0" }}>{v}</span>
+                <span style={{ fontFamily: "'Syne', sans-serif", fontSize: "clamp(1.1rem, 4vw, 1.6rem)", fontWeight: 800, color: "#F0F0F0" }}>{v}</span>
                 <span style={{ fontSize: "0.68rem", color: "#3A3A5A", letterSpacing: "0.12em", textTransform: "uppercase" }}>{l}</span>
               </div>
               {i < arr.length - 1 && (
