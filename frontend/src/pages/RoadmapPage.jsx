@@ -327,7 +327,7 @@ export default function RoadmapPage() {
     setError(null);
     setRoadmap(null);
     try {
-      const res = await fetch("/api/roadmap", {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/roadmap`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ year, background, skills, targetRole, timeline, goal }),
