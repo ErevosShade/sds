@@ -57,7 +57,7 @@ const slideVariants = {
 
 export default function TestimonialsSection() {
   const [index, setIndex] = useState(0);
-  const [dir, setDir]     = useState(1);
+  const [dir, setDir] = useState(1);
   const N = TESTIMONIALS.length;
 
   // Auto-advance every 5s — no manual controls
@@ -69,26 +69,49 @@ export default function TestimonialsSection() {
     return () => clearInterval(t);
   }, [N]);
 
-  const t   = TESTIMONIALS[index];
+  const t = TESTIMONIALS[index];
   const num = String(index + 1).padStart(2, "0");
 
   return (
     <section id="testimonials" style={{ background: "#050510", overflow: "hidden" }}>
 
       {/* ── TOP: Event marquee strip ── */}
-      <div style={{ borderBottom: "1px solid rgba(255,255,255,0.04)", overflow: "hidden", padding: "0.75rem 0", background: "rgba(255,255,255,0.01)" }}>
+      {/* ── TOP: Event marquee strip ── */}
+      <div
+        style={{
+          borderBottom: "1px solid rgba(255,255,255,0.04)",
+          overflow: "hidden",
+          padding: "0.75rem 0",
+          background: "rgba(255,255,255,0.01)",
+        }}
+      >
         <motion.div
-          className="flex gap-8 whitespace-nowrap"
-          animate={{ x: ["0%", "-50%"] }}
-          transition={{ duration: 28, repeat: Infinity, ease: "linear" }}
-          style={{ width: "max-content" }}
+          className="flex whitespace-nowrap"
+          style={{ width: "max-content", gap: "2rem" }}
+          animate={{ x: [0, -1000] }}
+          transition={{
+            duration: 20,
+            repeat: Infinity,
+            ease: "linear",
+          }}
         >
-          {[...MARQUEE_ITEMS, ...MARQUEE_ITEMS, ...MARQUEE_ITEMS, ...MARQUEE_ITEMS].map((item, i) => (
+          {[...MARQUEE_ITEMS, ...MARQUEE_ITEMS].map((item, i) => (
             <span key={i} className="flex items-center gap-6">
-              <span style={{ fontFamily: "Syne, sans-serif", fontSize: "0.72rem", fontWeight: 700, color: i % 8 < 4 ? "#1A3A5A" : "#2A1A00", letterSpacing: "0.12em", textTransform: "uppercase" }}>
+              <span
+                style={{
+                  fontFamily: "Syne, sans-serif",
+                  fontSize: "0.72rem",
+                  fontWeight: 700,
+                  color: i % 2 === 0 ? "#1A3A5A" : "#5A3A00",
+                  letterSpacing: "0.12em",
+                  textTransform: "uppercase",
+                }}
+              >
                 {item}
               </span>
-              <span style={{ color: "#1A1A2E", fontSize: "0.45rem" }}>◆</span>
+              <span style={{ color: "rgba(255,255,255,0.15)", fontSize: "0.45rem" }}>
+                ◆
+              </span>
             </span>
           ))}
         </motion.div>
@@ -169,7 +192,7 @@ export default function TestimonialsSection() {
           <AnimatePresence mode="wait">
             <motion.div key={`p-${index}`}
               initial={{ opacity: 0, y: 14 }}
-              animate={{ opacity: 1, y: 0, transition: { delay: 0.28, duration: 0.5, ease: [0.22,1,0.36,1] } }}
+              animate={{ opacity: 1, y: 0, transition: { delay: 0.28, duration: 0.5, ease: [0.22, 1, 0.36, 1] } }}
               exit={{ opacity: 0, transition: { duration: 0.2 } }}
               className="flex items-center gap-4 mt-8" style={{ position: "relative", zIndex: 1 }}>
               <div className="w-11 h-11 rounded-full flex items-center justify-center text-white font-black flex-shrink-0"
