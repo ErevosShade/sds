@@ -259,7 +259,7 @@ export default function Footer() {
             © 2025 Society for Data Science, BIT Mesra. All rights reserved.
           </span>
           <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "0.68rem", color: "#2A2A4A" }}>
-            built_with(<span style={{ color: "#4D91F0" }}>react</span>{" + "}<span style={{ color: "#F5A623" }}>python</span>{" + "}<span style={{ color: "#EF4444" }}>♥</span>)
+            built_by(<span style={{ color: "#4D91F0" }}>react</span>{" + "}<span style={{ color: "#F5A623" }}>python</span>{" + "}<span style={{ color: "#EF4444" }}>erevos</span>)
           </span>
         </div>
       </div>
