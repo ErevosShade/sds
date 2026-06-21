@@ -76,7 +76,6 @@ export default function TestimonialsSection() {
     <section id="testimonials" style={{ background: "#050510", overflow: "hidden" }}>
 
       {/* ── TOP: Event marquee strip ── */}
-      {/* ── TOP: Event marquee strip ── */}
       <div
         style={{
           borderBottom: "1px solid rgba(255,255,255,0.04)",
@@ -85,36 +84,36 @@ export default function TestimonialsSection() {
           background: "rgba(255,255,255,0.01)",
         }}
       >
-        <motion.div
-          className="flex whitespace-nowrap"
-          style={{ width: "max-content", gap: "2rem" }}
-          animate={{ x: [0, -1000] }}
-          transition={{
-            duration: 20,
-            repeat: Infinity,
-            ease: "linear",
-          }}
-        >
-          {[...MARQUEE_ITEMS, ...MARQUEE_ITEMS].map((item, i) => (
-            <span key={i} className="flex items-center gap-6">
+        <div className="marquee-track">
+          {[...MARQUEE_ITEMS, ...MARQUEE_ITEMS, ...MARQUEE_ITEMS].map((item, i) => (
+            <span
+              key={i}
+              className="flex items-center gap-6 flex-shrink-0"
+            >
               <span
                 style={{
                   fontFamily: "Syne, sans-serif",
                   fontSize: "0.72rem",
                   fontWeight: 700,
-                  color: i % 2 === 0 ? "#1A3A5A" : "#5A3A00",
+                  color: i % 8 < 4 ? "#1A3A5A" : "#2A1A00",
                   letterSpacing: "0.12em",
                   textTransform: "uppercase",
                 }}
               >
                 {item}
               </span>
-              <span style={{ color: "rgba(255,255,255,0.15)", fontSize: "0.45rem" }}>
+
+              <span
+                style={{
+                  color: "#1A1A2E",
+                  fontSize: "0.45rem",
+                }}
+              >
                 ◆
               </span>
             </span>
           ))}
-        </motion.div>
+        </div>
       </div>
 
       {/* ── Main testimonial area ── */}
@@ -135,7 +134,7 @@ export default function TestimonialsSection() {
         </div>
 
         {/* Content */}
-        <div className="flex-1 flex flex-col justify-center" style={{ padding: "4rem 3rem 3rem", position: "relative" }}>
+        <div className="flex-1 flex flex-col justify-center" style={{ padding: "clamp(2rem, 5vw, 4rem) clamp(1.25rem, 4vw, 3rem) 2.5rem", position: "relative" }}>
 
           {/* Ghost number */}
           <AnimatePresence mode="wait" custom={dir}>

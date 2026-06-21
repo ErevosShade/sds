@@ -217,6 +217,24 @@
   100% { background-position:  400px 0; }
 }
 
+@keyframes marqueeScroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-33.333%);
+  }
+}
+
+.marquee-track {
+  display: flex;
+  width: max-content;
+  white-space: nowrap;
+  gap: 2rem;
+  animation: marqueeScroll 35s linear infinite;
+  will-change: transform;
+}
+
 /* ============================================
    GLOBAL BASE STYLES
    ============================================ */
