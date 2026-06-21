@@ -1,7 +1,7 @@
-// src/utils/api.js
-// Central API client — all calls go through here
 
-const BASE = "/api"; // Vite proxies to http://localhost:3001
+const BASE = import.meta.env.VITE_API_URL
+  ? `${import.meta.env.VITE_API_URL}/api`
+  : "/api";   // fallback for local dev with Vite proxy
 
 async function req(path, options = {}) {
   const res = await fetch(`${BASE}${path}`, {

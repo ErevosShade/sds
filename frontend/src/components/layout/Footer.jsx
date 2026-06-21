@@ -1,15 +1,16 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Code2, Briefcase, Image, ArrowUpRight, Terminal } from "lucide-react";
+import { Code2, Briefcase, Image, ArrowUpRight, Terminal, Map } from "lucide-react";
 import { Link } from "react-router-dom";
 import sdsLogo from "../../assets/sds-logo.png";
 
 const NAV_ITEMS = [
-  { index: "01", label: "home",      to: "/",        output: "→  /index"    },
-  { index: "02", label: "about",     to: "/about",   output: "→  /about"    },
-  { index: "03", label: "events",    to: "/events",  output: "→  /events"   },
-  { index: "04", label: "team",      to: "/team",    output: "→  /team"     },
-  { index: "05", label: "ai_tools",  to: "/tools",   output: "→  /tools  ✦" },
+  { index: "01", label: "home",      to: "/",         output: "→  /index"      },
+  { index: "02", label: "about",     to: "/about",    output: "→  /about"      },
+  { index: "03", label: "events",    to: "/events",   output: "→  /events"     },
+  { index: "04", label: "team",      to: "/team",     output: "→  /team"       },
+  { index: "05", label: "ai_tools",  to: "/tools",    output: "→  /tools  ✦"  },
+  { index: "06", label: "roadmap",   to: "/roadmap",  output: "→  /roadmap  ◈", green: true },
 ];
 
 const SOCIALS = [
@@ -90,7 +91,7 @@ function NotebookCell() {
               <Link to={item.to} style={{ textDecoration: "none" }}>
                 <motion.div
                   className="flex items-center justify-between py-1 px-2 rounded-lg"
-                  animate={{ background: hovered === i ? "rgba(26,111,232,0.07)" : "transparent" }}
+                  animate={{ background: hovered === i ? (item.green ? "rgba(34,197,94,0.07)" : "rgba(26,111,232,0.07)") : "transparent" }}
                   whileHover={{ x: 3 }}
                   transition={{ type: "spring", stiffness: 400, damping: 25 }}
                 >
@@ -100,14 +101,19 @@ function NotebookCell() {
                     </span>
                     <span style={{
                       fontFamily: "'JetBrains Mono', monospace", fontSize: "0.75rem",
-                      color: hovered === i ? "#4D91F0" : "#A0A0B8", transition: "color 0.15s",
+                      color: hovered === i
+                        ? item.green ? "#22C55E" : "#4D91F0"
+                        : "#A0A0B8",
+                      transition: "color 0.15s",
                     }}>
                       {item.label}<span style={{ color: "#3A3A5A" }}>()</span>
                     </span>
                   </div>
                   <span style={{
                     fontFamily: "'JetBrains Mono', monospace", fontSize: "0.65rem",
-                    color: hovered === i ? (item.label === "ai_tools" ? "#F5A623" : "#22C55E") : "#3A3A5A",
+                    color: hovered === i
+                      ? item.green ? "#22C55E" : item.label === "ai_tools" ? "#F5A623" : "#22C55E"
+                      : "#3A3A5A",
                     transition: "color 0.15s",
                   }}>
                     {item.output}
@@ -143,7 +149,7 @@ export default function Footer() {
       <div style={{ maxWidth: 1100, margin: "0 auto", padding: "5rem 1.5rem 3rem", position: "relative", zIndex: 1 }}>
         <div className="grid gap-12 lg:grid-cols-2 lg:gap-20">
 
-          {/* ── LEFT: Brand + socials + get involved ── */}
+          {/* ── LEFT: Brand + socials + CTAs ── */}
           <div className="flex flex-col gap-6">
 
             {/* Logo + name */}
@@ -159,36 +165,22 @@ export default function Footer() {
               </div>
             </div>
 
-            {/* Social icons — horizontal row */}
+            {/* Socials */}
             <div className="flex items-center gap-3">
               {SOCIALS.map(({ Icon, href, label }) => (
                 <motion.a
-                  key={label}
-                  href={href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={label}
+                  key={label} href={href} target="_blank" rel="noopener noreferrer" aria-label={label}
                   className="w-9 h-9 rounded-xl flex items-center justify-center"
                   style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", color: "#606080" }}
-                  whileHover={{ scale: 1.12, y: -2 }}
-                  whileTap={{ scale: 0.94 }}
-                  onMouseEnter={e => {
-                    e.currentTarget.style.background = "rgba(26,111,232,0.12)";
-                    e.currentTarget.style.borderColor = "rgba(26,111,232,0.35)";
-                    e.currentTarget.style.color = "#4D91F0";
-                  }}
-                  onMouseLeave={e => {
-                    e.currentTarget.style.background = "rgba(255,255,255,0.04)";
-                    e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)";
-                    e.currentTarget.style.color = "#606080";
-                  }}
+                  whileHover={{ scale: 1.12, y: -2 }} whileTap={{ scale: 0.94 }}
+                  onMouseEnter={e => { e.currentTarget.style.background = "rgba(26,111,232,0.12)"; e.currentTarget.style.borderColor = "rgba(26,111,232,0.35)"; e.currentTarget.style.color = "#4D91F0"; }}
+                  onMouseLeave={e => { e.currentTarget.style.background = "rgba(255,255,255,0.04)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)"; e.currentTarget.style.color = "#606080"; }}
                 >
                   <Icon size={15} strokeWidth={1.8} />
                 </motion.a>
               ))}
             </div>
 
-            {/* Divider */}
             <div style={{ height: 1, background: "rgba(255,255,255,0.05)" }} />
 
             {/* Join card */}
@@ -220,10 +212,23 @@ export default function Footer() {
                   </motion.div>
                 </Link>
               </div>
+
+              {/* Roadmap CTA */}
+              <Link to="/roadmap" style={{ textDecoration: "none" }}>
+                <motion.div
+                  className="flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold w-full"
+                  style={{ background: "rgba(34,197,94,0.08)", border: "1px solid rgba(34,197,94,0.22)", color: "#22C55E", fontFamily: "'DM Sans', sans-serif" }}
+                  whileHover={{ background: "rgba(34,197,94,0.15)", scale: 1.01 }}
+                  whileTap={{ scale: 0.97 }}>
+                  <Map size={13} />
+                  Build Your DS Roadmap ◈
+                </motion.div>
+              </Link>
+
               <div aria-hidden className="absolute bottom-3 right-4 flex gap-1.5 opacity-25">
                 {[0,1,2].map(i => (
                   <motion.div key={i} className="w-1.5 h-1.5 rounded-full"
-                    style={{ background: i === 0 ? "#1A6FE8" : i === 1 ? "#4D91F0" : "#F5A623" }}
+                    style={{ background: i === 0 ? "#1A6FE8" : i === 1 ? "#4D91F0" : "#22C55E" }}
                     animate={{ scale: [1, 1.4, 1] }}
                     transition={{ duration: 2, delay: i * 0.4, repeat: Infinity }} />
                 ))}

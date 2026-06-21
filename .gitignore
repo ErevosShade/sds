@@ -6,7 +6,9 @@
 # ── Dependencies ──────────────────────────────────────
 node_modules/
 frontend/node_modules/
+frontend/.env.local
 backend/node_modules/
+backend/.env
 
 # ── Build outputs ─────────────────────────────────────
 frontend/dist/

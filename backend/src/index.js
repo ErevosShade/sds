@@ -7,6 +7,7 @@ import dataorcap from "./routes/dataorcap.js";
 import spotbug   from "./routes/spotbug.js";
 import github    from "./routes/github.js";
 import readme    from "./routes/readme.js";
+import roadmap   from "./routes/roadmap.js";
 
 const app  = express();
 const PORT = process.env.PORT || 3001;
@@ -15,7 +16,14 @@ const PORT = process.env.PORT || 3001;
 app.locals.model = model;
 
 // ── Middleware ────────────────────────────────────────
-app.use(cors({ origin: ["http://localhost:5173", "http://localhost:4173"] }));
+app.use(cors({
+  origin: [
+    "http://localhost:5173",
+    "http://localhost:4173",
+    "https://sds-psi.vercel.app",    // ← add this
+    "https://sds.bitmesra.in",             // ← and this if you have a custom domain
+  ]
+}));
 app.use(express.json({ limit: "50kb" }));
 
 // ── Routes ────────────────────────────────────────────
@@ -24,7 +32,7 @@ app.use("/api/dataorcap", dataorcap);
 app.use("/api/spotbug",   spotbug);
 app.use("/api/github",    github);
 app.use("/api/readme",    readme);
-
+app.use("/api/roadmap",   roadmap);
 // Health check
 app.get("/health", (_, res) => res.json({ ok: true, env: process.env.NODE_ENV }));
 

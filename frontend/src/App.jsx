@@ -6,7 +6,7 @@ import AboutPage   from "./pages/AboutPage";
 import MouseFollower from "./components/ui/MouseFollower"; 
 import ScrollToTop from "./components/ScrollToTop"; 
 import ChaosPage from "./pages/ChaosPage";
-
+import RoadmapPage from "./pages/RoadmapPage";
 export default function App() {
   return (
     <BrowserRouter>
@@ -18,6 +18,7 @@ export default function App() {
         <Route path="/team"    element={<TeamPage />}   />
         <Route path="/about"   element={<AboutPage />}  />
         <Route path="/tools"   element={<ChaosPage />}  />
+        <Route path="/roadmap" element={<RoadmapPage />} />
       </Routes>
     </BrowserRouter>
   );

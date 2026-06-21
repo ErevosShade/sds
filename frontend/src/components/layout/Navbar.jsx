@@ -1,15 +1,16 @@
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Sparkles } from "lucide-react";
+import { Menu, X, Map } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import sdsLogo from "../../assets/sds-logo.png";
 
 const NAV_LINKS = [
-  { label: "Home",    type: "route", to: "/"       },
-  { label: "Events",  type: "route", to: "/events" },
-  { label: "Team",    type: "route", to: "/team"   },
-  { label: "About",   type: "route", to: "/about"  },
-  { label: "AI Tools",type: "route", to: "/tools", special: true },
+  { label: "Home",     type: "route", to: "/"        },
+  { label: "Events",   type: "route", to: "/events"  },
+  { label: "Tools",    type: "route", to: "/tools"   },
+  { label: "Team",     type: "route", to: "/team"    },
+  { label: "About",    type: "route", to: "/about"   },
+  { label: "Roadmap",  type: "route", to: "/roadmap", special: true },
 ];
 
 const SCROLL_THRESHOLD = 80;
@@ -20,9 +21,9 @@ function scrollToSection(hash) {
 }
 
 export default function Navbar() {
-  const [scrolled,       setScrolled]       = useState(false);
-  const [mobileOpen,     setMobileOpen]     = useState(false);
-  const [activeSection,  setActiveSection]  = useState("hero");
+  const [scrolled,      setScrolled]      = useState(false);
+  const [mobileOpen,    setMobileOpen]    = useState(false);
+  const [activeSection, setActiveSection] = useState("hero");
   const location = useLocation();
 
   useEffect(() => {
@@ -48,10 +49,7 @@ export default function Navbar() {
   }, [mobileOpen]);
 
   const handleNavClick = useCallback((link, e) => {
-    if (link.type === "scroll") {
-      e?.preventDefault();
-      scrollToSection(link.to);
-    }
+    if (link.type === "scroll") { e?.preventDefault(); scrollToSection(link.to); }
     setMobileOpen(false);
   }, []);
 
@@ -62,55 +60,39 @@ export default function Navbar() {
 
   return (
     <>
-      {/* ── Outer header: always full-width fixed, transparent ── */}
-      <header
-        className="fixed top-0 left-0 right-0 z-50"
-        style={{ pointerEvents: "none" }}
-      >
-        {/* Outer centering shell — always full width, just provides padding */}
+      <header className="fixed top-0 left-0 right-0 z-50" style={{ pointerEvents: "none" }}>
         <motion.div
           className="w-full flex justify-center"
-          animate={scrolled ? { paddingLeft: "24px", paddingRight: "24px", paddingTop: "12px", paddingBottom: "0px" } : { paddingLeft: "0px", paddingRight: "0px", paddingTop: "0px", paddingBottom: "0px" }}
+          animate={scrolled
+            ? { paddingLeft: "24px", paddingRight: "24px", paddingTop: "12px", paddingBottom: "0px" }
+            : { paddingLeft: "0px",  paddingRight: "0px",  paddingTop: "0px",  paddingBottom: "0px" }}
           transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
         >
-          {/* ── Inner pill — morphs from full-width strip to floating pill ── */}
           <motion.nav
             animate={scrolled ? "scrolled" : "top"}
             variants={{
               top: {
-                maxWidth: "1400px",
-                borderRadius: 0,
-                background: "rgba(5,5,16,0)",
-                backdropFilter: "blur(0px)",
-                WebkitBackdropFilter: "blur(0px)",
-                borderColor: "rgba(255,255,255,0)",
+                maxWidth: "1400px", borderRadius: 0,
+                background: "rgba(5,5,16,0)", backdropFilter: "blur(0px)",
+                WebkitBackdropFilter: "blur(0px)", borderColor: "rgba(255,255,255,0)",
                 boxShadow: "0 0 0 rgba(0,0,0,0)",
-                paddingTop: "1.1rem",
-                paddingBottom: "1.1rem",
-                paddingLeft: "2rem",
-                paddingRight: "2rem",
+                paddingTop: "1.1rem", paddingBottom: "1.1rem",
+                paddingLeft: "2rem",  paddingRight: "2rem",
               },
               scrolled: {
-                maxWidth: "860px",
-                borderRadius: 9999,
+                maxWidth: "920px", borderRadius: 9999,
                 background: "rgba(8,8,22,0.85)",
                 backdropFilter: "blur(20px) saturate(1.5)",
                 WebkitBackdropFilter: "blur(20px) saturate(1.5)",
                 borderColor: "rgba(26,111,232,0.20)",
                 boxShadow: "0 8px 40px rgba(0,0,0,0.55), 0 0 0 1px rgba(26,111,232,0.06) inset",
-                paddingTop: "0.5rem",
-                paddingBottom: "0.5rem",
-                paddingLeft: "1.25rem",
-                paddingRight: "1.25rem",
+                paddingTop: "0.5rem",  paddingBottom: "0.5rem",
+                paddingLeft: "1.25rem", paddingRight: "1.25rem",
               },
             }}
             transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
             className="flex items-center justify-between w-full"
-            style={{
-              pointerEvents: "auto",
-              border: "1px solid",
-              willChange: "max-width, border-radius, background",
-            }}
+            style={{ pointerEvents: "auto", border: "1px solid", willChange: "max-width, border-radius, background" }}
           >
             {/* Logo */}
             <Link to="/" className="flex items-center gap-2.5 flex-shrink-0 group">
@@ -118,21 +100,15 @@ export default function Navbar() {
                 animate={scrolled ? { width: 32, height: 32, padding: "4px" } : { width: 40, height: 40, padding: "5px" }}
                 transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
                 className="rounded-xl overflow-hidden flex-shrink-0"
-                style={{
-                  background: "#0D0D1A",
-                  border: "1px solid rgba(26,111,232,0.28)",
-                  boxShadow: "0 0 12px rgba(26,111,232,0.12)",
-                }}
+                style={{ background: "#0D0D1A", border: "1px solid rgba(26,111,232,0.28)", boxShadow: "0 0 12px rgba(26,111,232,0.12)" }}
               >
                 <img src={sdsLogo} alt="SDS" className="w-full h-full object-contain" />
               </motion.div>
               <AnimatePresence>
                 {!scrolled && (
                   <motion.div
-                    initial={{ opacity: 0, width: 0 }}
-                    animate={{ opacity: 1, width: "auto" }}
-                    exit={{ opacity: 0, width: 0 }}
-                    transition={{ duration: 0.3 }}
+                    initial={{ opacity: 0, width: 0 }} animate={{ opacity: 1, width: "auto" }}
+                    exit={{ opacity: 0, width: 0 }} transition={{ duration: 0.3 }}
                     className="flex flex-col leading-tight overflow-hidden"
                   >
                     <span style={{ fontFamily: "'Syne',sans-serif", color: "#F0F0F0", fontWeight: 700, fontSize: "0.85rem", lineHeight: 1.1 }}>SDS</span>
@@ -146,35 +122,37 @@ export default function Navbar() {
             <div className="hidden md:flex items-center gap-1">
               {NAV_LINKS.map((link) => {
                 const active = isActive(link);
+
+                // ── Roadmap green pill ──
                 if (link.special) {
                   return (
                     <Link key={link.label} to={link.to} style={{ textDecoration: "none" }}>
                       <motion.div
                         animate={{
-                          background: active
-                            ? "rgba(245,166,35,0.22)"
-                            : scrolled ? "rgba(245,166,35,0.10)" : "rgba(245,166,35,0.07)",
-                          paddingLeft: scrolled ? "0.9rem" : "1rem",
+                          background: active ? "rgba(34,197,94,0.22)" : scrolled ? "rgba(34,197,94,0.10)" : "rgba(34,197,94,0.07)",
+                          paddingLeft:  scrolled ? "0.9rem" : "1rem",
                           paddingRight: scrolled ? "0.9rem" : "1rem",
-                          paddingTop: scrolled ? "0.35rem" : "0.4rem",
+                          paddingTop:    scrolled ? "0.35rem" : "0.4rem",
                           paddingBottom: scrolled ? "0.35rem" : "0.4rem",
                         }}
-                        whileHover={{ background: "rgba(245,166,35,0.22)", scale: 1.04 }}
+                        whileHover={{ background: "rgba(34,197,94,0.22)", scale: 1.04 }}
                         transition={{ duration: 0.2 }}
                         className="flex items-center gap-1.5 rounded-full font-bold text-sm cursor-pointer"
                         style={{
-                          color: "#F5A623",
-                          border: `1px solid rgba(245,166,35,${active ? "0.55" : "0.28"})`,
-                          boxShadow: active ? "0 0 16px rgba(245,166,35,0.25)" : "none",
+                          color: "#22C55E",
+                          border: `1px solid rgba(34,197,94,${active ? "0.55" : "0.28"})`,
+                          boxShadow: active ? "0 0 16px rgba(34,197,94,0.25)" : "none",
                           fontFamily: "'DM Sans', sans-serif",
                         }}
                       >
-                        <Sparkles size={12} strokeWidth={2.5} />
-                        AI Tools
+                        <Map size={12} strokeWidth={2.5} />
+                        Roadmap
                       </motion.div>
                     </Link>
                   );
                 }
+
+                // ── Regular links ──
                 return (
                   <Link
                     key={link.label}
@@ -185,12 +163,7 @@ export default function Navbar() {
                     <motion.div
                       animate={
                         active
-                          ? {
-                              background: scrolled
-                                ? "rgba(26,111,232,0.18)"
-                                : "rgba(26,111,232,0.10)",
-                              color: "#F0F0F0",
-                            }
+                          ? { background: scrolled ? "rgba(26,111,232,0.18)" : "rgba(26,111,232,0.10)", color: "#F0F0F0" }
                           : { background: "rgba(255,255,255,0)", color: "#808098" }
                       }
                       whileHover={{ color: "#F0F0F0", background: "rgba(255,255,255,0.05)" }}
@@ -212,63 +185,40 @@ export default function Navbar() {
               })}
             </div>
 
-
             {/* Mobile hamburger */}
             <button
               className="md:hidden flex items-center justify-center w-9 h-9 rounded-full transition-all duration-200"
               style={{
                 background: mobileOpen ? "rgba(26,111,232,0.18)" : "rgba(255,255,255,0.06)",
-                border: "1px solid rgba(255,255,255,0.10)",
-                color: "#A0A0B8",
-                pointerEvents: "auto",
+                border: "1px solid rgba(255,255,255,0.10)", color: "#A0A0B8", pointerEvents: "auto",
               }}
               onClick={() => setMobileOpen((o) => !o)}
               aria-label={mobileOpen ? "Close menu" : "Open menu"}
             >
               <AnimatePresence mode="wait" initial={false}>
-                {mobileOpen ? (
-                  <motion.span key="x" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }} transition={{ duration: 0.15 }}>
-                    <X size={16} />
-                  </motion.span>
-                ) : (
-                  <motion.span key="menu" initial={{ rotate: 90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: -90, opacity: 0 }} transition={{ duration: 0.15 }}>
-                    <Menu size={16} />
-                  </motion.span>
-                )}
+                {mobileOpen
+                  ? <motion.span key="x"    initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90,  opacity: 0 }} transition={{ duration: 0.15 }}><X    size={16} /></motion.span>
+                  : <motion.span key="menu" initial={{ rotate:  90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: -90, opacity: 0 }} transition={{ duration: 0.15 }}><Menu size={16} /></motion.span>}
               </AnimatePresence>
             </button>
           </motion.nav>
         </motion.div>
 
-        {/* ── Mobile drawer ── */}
+        {/* Mobile drawer */}
         <AnimatePresence>
           {mobileOpen && (
             <motion.div
               key="drawer"
-              initial={{ opacity: 0, y: -12 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -12 }}
+              initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }}
               transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
               className="md:hidden mx-4 mt-2 rounded-2xl overflow-hidden"
-              style={{
-                background: "rgba(8,8,22,0.96)",
-                border: "1px solid rgba(26,111,232,0.15)",
-                backdropFilter: "blur(20px)",
-                WebkitBackdropFilter: "blur(20px)",
-                boxShadow: "0 16px 48px rgba(0,0,0,0.6)",
-                pointerEvents: "auto",
-              }}
+              style={{ background: "rgba(8,8,22,0.96)", border: "1px solid rgba(26,111,232,0.15)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", boxShadow: "0 16px 48px rgba(0,0,0,0.6)", pointerEvents: "auto" }}
             >
               <div style={{ padding: "1rem 1.25rem 1.25rem" }}>
-                {NAV_LINKS.map((link, i) => {
+                {NAV_LINKS.filter(l => !l.special).map((link, i) => {
                   const active = isActive(link);
                   return (
-                    <motion.div
-                      key={link.label}
-                      initial={{ opacity: 0, x: -12 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: i * 0.055, duration: 0.28, ease: [0.22,1,0.36,1] }}
-                    >
+                    <motion.div key={link.label} initial={{ opacity: 0, x: -12 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.055, duration: 0.28, ease: [0.22,1,0.36,1] }}>
                       <Link
                         to={link.type === "route" ? link.to : location.pathname}
                         onClick={(e) => handleNavClick(link, e)}
@@ -278,27 +228,26 @@ export default function Navbar() {
                         <span style={{ fontFamily: "'DM Sans',sans-serif", fontSize: "0.95rem", fontWeight: 500, color: active ? "#F0F0F0" : "#808098" }}>
                           {link.label}
                         </span>
-                        {active && (
-                          <span className="w-1.5 h-1.5 rounded-full" style={{ background: "#F5A623", boxShadow: "0 0 8px #F5A623" }} />
-                        )}
+                        {active && <span className="w-1.5 h-1.5 rounded-full" style={{ background: "#F5A623", boxShadow: "0 0 8px #F5A623" }} />}
                       </Link>
                     </motion.div>
                   );
                 })}
+
+                {/* Roadmap CTA in mobile */}
                 <motion.div
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
+                  initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: NAV_LINKS.length * 0.055, duration: 0.28 }}
                   className="pt-3"
                 >
                   <Link
-                    to="/tools"
+                    to="/roadmap"
                     onClick={() => setMobileOpen(false)}
                     className="flex items-center justify-center gap-2 w-full py-2.5 rounded-full font-semibold text-sm"
-                    style={{ background: "rgba(26,111,232,0.15)", border: "1px solid rgba(26,111,232,0.30)", color: "#4D91F0" }}
+                    style={{ background: "rgba(34,197,94,0.12)", border: "1px solid rgba(34,197,94,0.30)", color: "#22C55E", textDecoration: "none", fontFamily: "'DM Sans',sans-serif" }}
                   >
-                    <Sparkles size={13} />
-                    Explore AI Tools
+                    <Map size={13} />
+                    Build My Roadmap
                   </Link>
                 </motion.div>
               </div>
